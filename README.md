@@ -1,3 +1,12 @@
+---
+type: navigation
+scope: product
+name: augury
+version: "1.0"
+summary: Open-source methodology and application for organizational health diagnosis and strategic execution
+token_estimate: 1500
+---
+
 # Augury
 
 **An open-source methodology and application for organizational health diagnosis and strategic execution.**
