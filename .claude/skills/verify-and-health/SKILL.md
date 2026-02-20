@@ -1,0 +1,99 @@
+---
+name: verify-and-health
+description: Runs all verification gates and health checks, interprets failures with actionable fix guidance, and re-verifies after fixes. Use at session start, before commits, or whenever you need to check project integrity. Lightweight daily-use workflow.
+protocol_id: PROTO-ORG-4
+protocol_file: organon/protocols/PROTOCOLS.md
+tools: [organon-verify, organon-health]
+loads:
+  - CLAUDE.md
+methodology_version: "0.5.1"
+---
+
+# Verify and Health Workflow
+
+> Daily-use verification and health check for project integrity.
+
+## Methodology Context
+
+This workflow implements the **Verify** step of the Organon enforcement loop. Verification runs 9 automated gates (frontmatter, triplets, references, placeholders, freshness, invariant coverage, workflow quality, tier4 tests, version alignment) that close the gap between documented constraints and actual project state. For methodology background, read `organon/PRIMER.md`.
+
+---
+
+## When to Use This Skill
+
+Use this skill when:
+- **Starting a work session** — baseline integrity check
+- **Before committing changes** — ensure nothing is broken
+- **After significant edits** — verify no regressions
+
+---
+
+## Steps
+
+### Step 1: Run All Verification Gates
+
+    organon verify
+
+This runs all gates:
+- **frontmatter** — YAML frontmatter present, valid, and truthful
+- **triplets** — Protocol↔workflow bindings are bidirectional
+- **references** — `inherits_from`, `loads:`, `protocol_file` paths resolve
+- **placeholder-detection** — Template placeholders like `[Describe...]` detected (advisory)
+- **freshness** — Files reviewed within threshold (advisory)
+- **invariant-coverage** — Invariants tracked in tests
+- **workflow-quality** — Workflows have protocol_id, tools, loads, error recovery
+- **tier4-tests** — Test files use @organon-invariant annotations
+- **version-alignment** — Config methodology_version matches CLI version (advisory)
+
+### Step 2: Run Health Check
+
+    organon health
+
+Reports overall project health score.
+
+### Step 3: Interpret Failures
+
+| Gate | Common Failure | Fix |
+|------|---------------|-----|
+| frontmatter | Missing field | Add field per frontmatter schema |
+| frontmatter | Count mismatch | Update counts to match content |
+| frontmatter | Token estimate off | Recalculate (~12 tokens/line) |
+| triplets | Orphaned workflow | Add `protocol_id` to workflow frontmatter |
+| triplets | Phantom automation | Create workflow or change protocol to manual |
+| invariant-coverage | Invariant without test | Create tier-4 test for the invariant |
+| workflow-quality | Missing protocol_id | Add `protocol_id: PROTO-SCOPE-N` |
+| workflow-quality | Missing error recovery | Add `## Error Recovery` section |
+| tier4-tests | Missing annotation | Add `@organon-invariant INV-*` to test |
+| references | Broken inherits_from | Fix `inherits_from` to reference existing organon names |
+| references | Broken loads path | Fix file path in workflow `loads:` array |
+| placeholder-detection | Uncustomized template | Replace `[Describe...]` placeholders with real content |
+| version-alignment | Methodology drift | Update `methodology_version` in config to match CLI |
+
+### Step 4: Apply Fixes
+
+For each failure: identify file and field, apply fix, reference specification.
+
+### Step 5: Re-verify
+
+    organon verify && organon health
+
+All gates should pass. Health score should be equal or higher.
+
+---
+
+## Verification
+
+- [ ] All gates pass (`organon verify` exits 0)
+- [ ] Health score reported
+- [ ] No regressions from previous health score
+
+---
+
+## Error Recovery
+
+| Failure | Recovery Action |
+|---------|-----------------|
+| `organon verify` not found | Build: `cd packages/tools && npm install && npm run build` |
+| Fix introduces new failure | Re-run full verify. Fix cascading issues in order: frontmatter → triplets → workflow-quality. |
+| Health score decreased | Investigate what changed. Usually means file removed or frontmatter invalidated. |
+| Too many failures | Prioritize: frontmatter first (others depend on it), then triplets, then rest. |

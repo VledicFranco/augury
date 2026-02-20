@@ -1,0 +1,36 @@
+---
+type: navigation
+scope: product
+name: organon-root
+version: "1.0"
+summary: Navigation hub for this project's organon hierarchy
+token_estimate: 350
+provides: [organon-navigation]
+audience: [llm, human]
+---
+
+# Organon
+
+> This project uses the [Organon methodology](https://github.com/VledicFranco/organon) for documentation-driven development.
+
+---
+
+## Contents
+
+| File | Type | Description |
+|------|------|-------------|
+| [PRIMER.md](PRIMER.md) | Rationale | Condensed methodology primer — read on first session |
+| [methodology-reference.md](methodology-reference.md) | Rationale | Detailed methodology reference — frontmatter, scopes, gates |
+| [ETHOS.md](ETHOS.md) | Constraints | Product-level identity, invariants, and principles |
+| [PHILOSOPHY.md](PHILOSOPHY.md) | Rationale | Design decisions and trade-offs |
+| [protocols/PROTOCOLS.md](protocols/PROTOCOLS.md) | Procedures | Step-by-step development protocols |
+
+---
+
+## Getting Started
+
+1. Read `PRIMER.md` to understand the Organon methodology
+2. Edit `ETHOS.md` to define your project's identity and constraints
+3. Edit `PHILOSOPHY.md` to document your design rationale
+4. Run `organon verify` to check integrity
+5. Run `organon health` for a project health score
